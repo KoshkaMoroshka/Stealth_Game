@@ -5,10 +5,10 @@ using UnityEngine;
 public class GekkoScript : MonoBehaviour
 {
     [SerializeField] private Vector3 offsetCamera;
-    [SerializeField] private float radius;
-    [SerializeField] private float angularSpeed;
+    [SerializeField] private float radius = 0.4f;
+    [SerializeField] private float angularSpeed = 4f;
 
-    private float _angle = 0;
+    private float _angle = 0f;
     private Camera _camera;
     
     private void Start()
@@ -19,18 +19,25 @@ public class GekkoScript : MonoBehaviour
     private void Update()
     {
         _camera.transform.position = transform.position + offsetCamera;
-        _camera.transform.LookAt(this.transform);
+        _camera.transform.LookAt(transform);
 
-        //positionX = transform.position.x * 
+        var positionX = transform.position.x + Mathf.Cos(_angle) * radius;
+        var positionZ = transform.position.z + Mathf.Sin(_angle) * radius;
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            
-            offsetCamera -= new Vector3(1f, 0, 0) * Time.deltaTime * 2;
+            offsetCamera = (new Vector3(positionX, 0, positionZ) * Time.deltaTime) + offsetCamera;
+            _angle += Time.deltaTime * angularSpeed;
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            offsetCamera += new Vector3(1f, 0, 0) * Time.deltaTime * 2;
+            offsetCamera = -(new Vector3(positionX, 0, positionZ) * Time.deltaTime) + offsetCamera;
+            _angle -= Time.deltaTime * angularSpeed;
+        }
+
+        if (_angle > 360 || _angle < -360)
+        {
+            _angle = 0;
         }
     }
 }
