@@ -6,6 +6,8 @@ public class PlayerControll : MonoBehaviour
 {
     [SerializeField] private Transform gekkon;
 
+    [SerializeField] private Transform aim;
+
     [SerializeField] private float speed = 1f;
 
     private Camera _camera;
@@ -31,5 +33,12 @@ public class PlayerControll : MonoBehaviour
         {
             transform.position += new Vector3(1f, 0, 0) * Time.deltaTime * speed;
         }
+
+        if (Physics.Raycast(new Ray(transform.position, Vector3.down), out RaycastHit hit))
+        {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
+                aim.transform.position = hit.point;
+        }
+            
     }
 }
