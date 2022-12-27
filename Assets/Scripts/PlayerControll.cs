@@ -10,7 +10,7 @@ public class PlayerControll : MonoBehaviour
 
     [SerializeField] private float speed = 1f;
 
-    private Camera _camera;
+    private RaycastHit _hit;
 
     private void Update()
     {
@@ -19,26 +19,29 @@ public class PlayerControll : MonoBehaviour
 
         if (Input.GetKey(KeyCode.W))
         {
-            transform.position += new Vector3(0, 0, 1f) * Time.deltaTime * speed;
+            transform.position += transform.TransformDirection(Vector3.forward) * Time.deltaTime * speed;
         }
         if (Input.GetKey(KeyCode.S))
         {
-            transform.position -= new Vector3(0, 0, 1f) * Time.deltaTime * speed;
+            transform.position -= transform.TransformDirection(Vector3.forward) * Time.deltaTime * speed;
         }
         if (Input.GetKey(KeyCode.A))
         {
-            transform.position -= new Vector3(1f, 0, 0) * Time.deltaTime * speed;
+            transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles - new Vector3(0, 30, 0) * Time.deltaTime * speed);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            transform.position += new Vector3(1f, 0, 0) * Time.deltaTime * speed;
+            transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0, 30, 0) * Time.deltaTime * speed);
         }
 
         if (Physics.Raycast(new Ray(transform.position, Vector3.down), out RaycastHit hit))
         {
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
-                aim.transform.position = hit.point;
+                _hit = hit;
         }
+
+        aim.transform.position = Vector3.Lerp(aim.transform.position, _hit.point, Time.deltaTime * speed);
+        aim.rotation = transform.rotation;
             
     }
 }

@@ -9,6 +9,6 @@ public class GekkoScript : MonoBehaviour
     private void Start()
     {
         _camera = Camera.main;
-        _camera.transform.LookAt(transform);
+        _camera.transform.eulerAngles = new Vector3(21.85f, -1.3f, 0);
     }
 }
