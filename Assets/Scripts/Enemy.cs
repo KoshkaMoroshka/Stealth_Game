@@ -23,21 +23,26 @@ public class Enemy : MonoBehaviour
 
         var parent = transform.parent.transform;
 
-        parent.position = Vector3.Lerp(transform.position, parent.position, Time.deltaTime * (speed/1000));
+        parent.position += (target.transform.position - parent.position).normalized * speed * Time.deltaTime;
         parent.LookAt(target.transform);
     }
 
     public static bool IsVisible(Transform eye, GameObject target, float angle)
     {
-        var direction = (target.transform.position - eye.position).normalized;
+        var offset = new Vector3(0, 0.25f, 0);
+        var direction = (target.transform.position + offset - eye.position).normalized;
         if (Vector3.Dot(direction, eye.TransformDirection(Vector3.forward)) < angle)
             return false;
 
-        Physics.Raycast(new Ray(eye.position, direction), out RaycastHit hit, 1000f);
+        Physics.Raycast(new Ray(eye.position, direction), out RaycastHit hit, 10f);
 
         if (hit.collider == null)
             return false;
 
-        return hit.collider.gameObject == target;
+        if (hit.collider.gameObject != target)
+            return false;
+
+        Debug.DrawLine(eye.position, target.transform.position + offset);
+        return true;
     }
 }
